@@ -1,31 +1,11 @@
-# Lightweight Java Application
+# Assignment Tracker
 
-This is a lightweight Java application designed to run on macOS. Below are the instructions on how to build and run the application.
+A simple and easy way to keep track of due dates and make a list.
+Made for MacOs
 
 ## Prerequisites
 
 - Java Development Kit (JDK) 8 or higher
-- Gradle 6.0 or higher
-
-## Building the Application
-
-1. Open a terminal and navigate to the project directory:
-   ```
-   cd /path/to/lightweight-java-app
-   ```
-
-2. Build the application using Gradle:
-   ```
-   ./gradlew build
-   ```
-
-## Running the Application
-
-After building the application, you can run it with the following command:
-
-```
-java -cp build/libs/lightweight-java-app.jar src.Main
-```
 
 ## Project Structure
 
@@ -38,6 +18,3 @@ lightweight-java-app
 └── README.md            # Project documentation
 ```
 
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
