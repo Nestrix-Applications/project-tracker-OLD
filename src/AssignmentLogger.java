@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class AssignmentLogger {
     public static void main(String[] args) {
@@ -18,7 +20,7 @@ public class AssignmentLogger {
         // Create a panel for adding new tasks
         JPanel inputPanel = new JPanel(new BorderLayout());
         JTextField taskField = new JTextField("Task Name");
-        JTextField dueDateField = new JTextField("Due Date (e.g., 2025-04-15)");
+        JTextField dueDateField = new JTextField("Due Date (MM/DD/YYYY)");
         JButton addButton = new JButton("Add Task");
 
         inputPanel.add(taskField, BorderLayout.CENTER);
@@ -35,19 +37,31 @@ public class AssignmentLogger {
             String taskText = taskField.getText();
             String dueDateText = dueDateField.getText();
 
-            if (!taskText.isEmpty() && !dueDateText.isEmpty()) {
+            // Validate due date format or allow it to be blank
+            if (!dueDateText.isEmpty()) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                    dateFormat.setLenient(false);
+                    dateFormat.parse(dueDateText); // Validate date format
+                } catch (ParseException e) {
+                    JOptionPane.showMessageDialog(frame, "Invalid date format. Use MM/DD/YYYY.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
+            if (!taskText.isEmpty()) {
                 // Create a new panel for the task row
                 JPanel taskRow = new JPanel();
                 taskRow.setLayout(new BorderLayout());
-                taskRow.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY)); // Add a dividing line
+                taskRow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Add padding
 
                 // Create labels for the task name and due date
-                JLabel taskLabel = new JLabel(taskText);
+                JLabel taskLabel = new JLabel("• " + taskText);
                 JLabel dueDateLabel = new JLabel(dueDateText, SwingConstants.RIGHT);
 
-                // Add the labels to the task row
+                // Add the labels to the task row with a vertical separator
                 taskRow.add(taskLabel, BorderLayout.WEST);
-                taskRow.add(new JSeparator(SwingConstants.VERTICAL), BorderLayout.CENTER); // Add a vertical line
+                taskRow.add(new JSeparator(SwingConstants.VERTICAL), BorderLayout.CENTER); // Vertical line
                 taskRow.add(dueDateLabel, BorderLayout.EAST);
 
                 // Add the task row to the task panel
@@ -59,7 +73,7 @@ public class AssignmentLogger {
 
                 // Clear input fields
                 taskField.setText("Task Name");
-                dueDateField.setText("Due Date (e.g., 2025-04-15)");
+                dueDateField.setText("Due Date (MM/DD/YYYY)");
             }
         });
 
