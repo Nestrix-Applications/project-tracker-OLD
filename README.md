@@ -22,3 +22,4 @@ Note to self
 
 cd /Volumes/Toshiba\ HDD/Code/assignment\ logger/src
 javac AssignmentLogger.java
+jar cfm AssignmentLogger.jar MANIFEST.MF AssignmentLogger.class

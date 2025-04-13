@@ -21,7 +21,6 @@ public class AssignmentLogger {
 
         // Create a split pane to separate task names and due dates
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, taskNamePanel, dueDatePanel);
-        splitPane.setDividerLocation(frame.getWidth() / 2); // Set the divider in the middle
         splitPane.setEnabled(false); // Disable user resizing
 
         // Create a panel for adding new tasks
@@ -72,13 +71,25 @@ public class AssignmentLogger {
         frame.add(splitPane, BorderLayout.CENTER);
         frame.add(inputPanel, BorderLayout.SOUTH);
 
+        // Make the window visible
+        frame.setVisible(true);
+
+        // Set the divider location after the frame is visible
+        splitPane.setDividerLocation(frame.getWidth() / 2);
+
         // Add action listener to the "Add Task" button
         addButton.addActionListener(_ -> {
             String taskText = taskField.getText();
             String dueDateText = dueDateField.getText();
 
+            // Validate task name
+            if (taskText.isEmpty() || taskText.equals("Task Name")) {
+                JOptionPane.showMessageDialog(frame, "Task name cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             // Validate due date format or allow it to be blank
-            if (!dueDateText.isEmpty()) {
+            if (!dueDateText.isEmpty() && !dueDateText.equals("Due Date (MM/DD/YYYY)")) {
                 try {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
                     dateFormat.setLenient(false);
@@ -89,28 +100,23 @@ public class AssignmentLogger {
                 }
             }
 
-            if (!taskText.isEmpty()) {
-                // Create labels for the task name and due date
-                JLabel taskLabel = new JLabel("• " + taskText);
-                JLabel dueDateLabel = new JLabel(dueDateText);
+            // Create labels for the task name and due date
+            JLabel taskLabel = new JLabel("• " + taskText);
+            JLabel dueDateLabel = new JLabel(dueDateText);
 
-                // Add the labels to their respective panels
-                taskNamePanel.add(taskLabel);
-                dueDatePanel.add(dueDateLabel);
+            // Add the labels to their respective panels
+            taskNamePanel.add(taskLabel);
+            dueDatePanel.add(dueDateLabel);
 
-                // Refresh the panels
-                taskNamePanel.revalidate();
-                taskNamePanel.repaint();
-                dueDatePanel.revalidate();
-                dueDatePanel.repaint();
+            // Refresh the panels
+            taskNamePanel.revalidate();
+            taskNamePanel.repaint();
+            dueDatePanel.revalidate();
+            dueDatePanel.repaint();
 
-                // Clear input fields
-                taskField.setText("Task Name");
-                dueDateField.setText("Due Date (MM/DD/YYYY)");
-            }
+            // Clear input fields
+            taskField.setText("");
+            dueDateField.setText("");
         });
-
-        // Make the window visible
-        frame.setVisible(true);
     }
 }
