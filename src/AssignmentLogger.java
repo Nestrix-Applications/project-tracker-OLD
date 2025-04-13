@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -10,12 +12,17 @@ public class AssignmentLogger {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
 
-        // Create a panel to hold the task list
-        JPanel taskPanel = new JPanel();
-        taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
+        // Create panels for task names and due dates
+        JPanel taskNamePanel = new JPanel();
+        taskNamePanel.setLayout(new BoxLayout(taskNamePanel, BoxLayout.Y_AXIS));
 
-        // Create a scroll pane for the task panel
-        JScrollPane scrollPane = new JScrollPane(taskPanel);
+        JPanel dueDatePanel = new JPanel();
+        dueDatePanel.setLayout(new BoxLayout(dueDatePanel, BoxLayout.Y_AXIS));
+
+        // Create a split pane to separate task names and due dates
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, taskNamePanel, dueDatePanel);
+        splitPane.setDividerLocation(frame.getWidth() / 2); // Set the divider in the middle
+        splitPane.setEnabled(false); // Disable user resizing
 
         // Create a panel for adding new tasks
         JPanel inputPanel = new JPanel(new BorderLayout());
@@ -23,13 +30,46 @@ public class AssignmentLogger {
         JTextField dueDateField = new JTextField("Due Date (MM/DD/YYYY)");
         JButton addButton = new JButton("Add Task");
 
+        // Add focus listeners to clear placeholder text
+        taskField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (taskField.getText().equals("Task Name")) {
+                    taskField.setText("");
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (taskField.getText().isEmpty()) {
+                    taskField.setText("Task Name");
+                }
+            }
+        });
+
+        dueDateField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (dueDateField.getText().equals("Due Date (MM/DD/YYYY)")) {
+                    dueDateField.setText("");
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (dueDateField.getText().isEmpty()) {
+                    dueDateField.setText("Due Date (MM/DD/YYYY)");
+                }
+            }
+        });
+
         inputPanel.add(taskField, BorderLayout.CENTER);
         inputPanel.add(dueDateField, BorderLayout.EAST);
         inputPanel.add(addButton, BorderLayout.SOUTH);
 
         // Add components to the frame
         frame.setLayout(new BorderLayout());
-        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(splitPane, BorderLayout.CENTER);
         frame.add(inputPanel, BorderLayout.SOUTH);
 
         // Add action listener to the "Add Task" button
@@ -50,26 +90,19 @@ public class AssignmentLogger {
             }
 
             if (!taskText.isEmpty()) {
-                // Create a new panel for the task row
-                JPanel taskRow = new JPanel();
-                taskRow.setLayout(new BorderLayout());
-                taskRow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Add padding
-
                 // Create labels for the task name and due date
                 JLabel taskLabel = new JLabel("• " + taskText);
-                JLabel dueDateLabel = new JLabel(dueDateText, SwingConstants.RIGHT);
+                JLabel dueDateLabel = new JLabel(dueDateText);
 
-                // Add the labels to the task row with a vertical separator
-                taskRow.add(taskLabel, BorderLayout.WEST);
-                taskRow.add(new JSeparator(SwingConstants.VERTICAL), BorderLayout.CENTER); // Vertical line
-                taskRow.add(dueDateLabel, BorderLayout.EAST);
+                // Add the labels to their respective panels
+                taskNamePanel.add(taskLabel);
+                dueDatePanel.add(dueDateLabel);
 
-                // Add the task row to the task panel
-                taskPanel.add(taskRow);
-
-                // Refresh the task panel
-                taskPanel.revalidate();
-                taskPanel.repaint();
+                // Refresh the panels
+                taskNamePanel.revalidate();
+                taskNamePanel.repaint();
+                dueDatePanel.revalidate();
+                dueDatePanel.repaint();
 
                 // Clear input fields
                 taskField.setText("Task Name");
