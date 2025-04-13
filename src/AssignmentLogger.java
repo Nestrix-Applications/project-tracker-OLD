@@ -6,7 +6,7 @@ public class AssignmentLogger {
         // Create the main application window
         JFrame frame = new JFrame("Assignment Logger");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
+        frame.setSize(600, 400);
 
         // Create a panel to hold the task list
         JPanel taskPanel = new JPanel();
@@ -32,25 +32,34 @@ public class AssignmentLogger {
 
         // Add action listener to the "Add Task" button
         addButton.addActionListener(_ -> {
-            if (taskPanel.getComponentCount() < 6) { // Limit to 6 tasks
-                String taskText = taskField.getText();
-                String dueDateText = dueDateField.getText();
+            String taskText = taskField.getText();
+            String dueDateText = dueDateField.getText();
 
-                if (!taskText.isEmpty() && !dueDateText.isEmpty()) {
-                    // Create a new task label
-                    JLabel taskLabel = new JLabel("• " + taskText + " (Due: " + dueDateText + ")");
-                    taskPanel.add(taskLabel);
+            if (!taskText.isEmpty() && !dueDateText.isEmpty()) {
+                // Create a new panel for the task row
+                JPanel taskRow = new JPanel();
+                taskRow.setLayout(new BorderLayout());
+                taskRow.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY)); // Add a dividing line
 
-                    // Refresh the task panel
-                    taskPanel.revalidate();
-                    taskPanel.repaint();
+                // Create labels for the task name and due date
+                JLabel taskLabel = new JLabel(taskText);
+                JLabel dueDateLabel = new JLabel(dueDateText, SwingConstants.RIGHT);
 
-                    // Clear input fields
-                    taskField.setText("Task Name");
-                    dueDateField.setText("Due Date (e.g., 2025-04-15)");
-                }
-            } else {
-                JOptionPane.showMessageDialog(frame, "You can only add up to 6 tasks.", "Limit Reached", JOptionPane.WARNING_MESSAGE);
+                // Add the labels to the task row
+                taskRow.add(taskLabel, BorderLayout.WEST);
+                taskRow.add(new JSeparator(SwingConstants.VERTICAL), BorderLayout.CENTER); // Add a vertical line
+                taskRow.add(dueDateLabel, BorderLayout.EAST);
+
+                // Add the task row to the task panel
+                taskPanel.add(taskRow);
+
+                // Refresh the task panel
+                taskPanel.revalidate();
+                taskPanel.repaint();
+
+                // Clear input fields
+                taskField.setText("Task Name");
+                dueDateField.setText("Due Date (e.g., 2025-04-15)");
             }
         });
 

@@ -18,3 +18,7 @@ lightweight-java-app
 └── README.md            # Project documentation
 ```
 
+Note to self
+
+cd /Volumes/Toshiba\ HDD/Code/assignment\ logger/src
+javac AssignmentLogger.java
