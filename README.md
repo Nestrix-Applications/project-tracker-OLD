@@ -5,7 +5,7 @@ Made for MacOs
 
 ## Prerequisites
 
-- Java Development Kit (JDK) 8 or higher
+- Java Development Kit (JDK) 14 or higher
 
 ## Project Structure
 
@@ -20,6 +20,16 @@ lightweight-java-app
 
 Note to self
 
-cd /Volumes/Toshiba\ HDD/Code/assignment\ logger/src
+
+cd "/Volumes/Toshiba HDD/Code/assignment logger/src"
 javac AssignmentLogger.java
-jar cfm AssignmentLogger.jar MANIFEST.MF AssignmentLogger.class
+
+
+jar cfm AssignmentLogger.jar manifest.txt AssignmentLogger.class AssignmentLogger\$1.class AssignmentLogger\$2.class
+
+jpackage \
+  --type app-image \
+  --input . \
+  --name AssignmentLogger \
+  --main-jar AssignmentLogger.jar \
+  --main-class AssignmentLogger
