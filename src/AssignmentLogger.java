@@ -2,10 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class AssignmentLogger {
+    private static final String SAVE_FILE = System.getProperty("user.home") + "/tasks.txt";
+
     public static void main(String[] args) {
         // Create the main application window
         JFrame frame = new JFrame("Assignment Logger");
@@ -13,15 +16,10 @@ public class AssignmentLogger {
         frame.setSize(600, 400);
 
         // Create panels for task names and due dates
-        JPanel taskNamePanel = new JPanel();
-        taskNamePanel.setLayout(new BoxLayout(taskNamePanel, BoxLayout.Y_AXIS));
+        JPanel taskPanel = new JPanel();
+        taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
 
-        JPanel dueDatePanel = new JPanel();
-        dueDatePanel.setLayout(new BoxLayout(dueDatePanel, BoxLayout.Y_AXIS));
-
-        // Create a split pane to separate task names and due dates
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, taskNamePanel, dueDatePanel);
-        splitPane.setEnabled(false); // Disable user resizing
+        JScrollPane scrollPane = new JScrollPane(taskPanel);
 
         // Create a panel for adding new tasks
         JPanel inputPanel = new JPanel(new BorderLayout());
@@ -68,14 +66,14 @@ public class AssignmentLogger {
 
         // Add components to the frame
         frame.setLayout(new BorderLayout());
-        frame.add(splitPane, BorderLayout.CENTER);
+        frame.add(scrollPane, BorderLayout.CENTER);
         frame.add(inputPanel, BorderLayout.SOUTH);
+
+        // Load tasks from the save file
+        loadTasks(taskPanel);
 
         // Make the window visible
         frame.setVisible(true);
-
-        // Set the divider location after the frame is visible
-        splitPane.setDividerLocation(frame.getWidth() / 2);
 
         // Add action listener to the "Add Task" button
         addButton.addActionListener(_ -> {
@@ -100,23 +98,87 @@ public class AssignmentLogger {
                 }
             }
 
-            // Create labels for the task name and due date
-            JLabel taskLabel = new JLabel("• " + taskText);
-            JLabel dueDateLabel = new JLabel(dueDateText);
+            // Add the task to the panel
+            addTaskToPanel(taskPanel, taskText, dueDateText);
 
-            // Add the labels to their respective panels
-            taskNamePanel.add(taskLabel);
-            dueDatePanel.add(dueDateLabel);
-
-            // Refresh the panels
-            taskNamePanel.revalidate();
-            taskNamePanel.repaint();
-            dueDatePanel.revalidate();
-            dueDatePanel.repaint();
+            // Save the task to the file
+            saveTask(taskText, dueDateText);
 
             // Clear input fields
             taskField.setText("");
             dueDateField.setText("");
         });
+    }
+
+    private static void loadTasks(JPanel taskPanel) {
+        File file = new File(SAVE_FILE);
+        if (!file.exists()) {
+            return; // No tasks to load
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" \\| ");
+                if (parts.length == 2) {
+                    addTaskToPanel(taskPanel, parts[0], parts[1]);
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error loading tasks: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private static void saveTask(String taskName, String dueDate) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(SAVE_FILE, true))) {
+            writer.write(taskName + " | " + dueDate);
+            writer.newLine();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error saving task: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private static void addTaskToPanel(JPanel taskPanel, String taskName, String dueDate) {
+        JPanel taskRow = new JPanel(new BorderLayout());
+        JCheckBox checkBox = new JCheckBox("• " + taskName + " (" + dueDate + ")");
+        checkBox.addActionListener(_ -> {
+            if (checkBox.isSelected()) {
+                taskPanel.remove(taskRow);
+                taskPanel.revalidate();
+                taskPanel.repaint();
+                deleteTaskFromFile(taskName, dueDate);
+            }
+        });
+
+        taskRow.add(checkBox, BorderLayout.CENTER);
+        taskPanel.add(taskRow);
+        taskPanel.revalidate();
+        taskPanel.repaint();
+    }
+
+    private static void deleteTaskFromFile(String taskName, String dueDate) {
+        File file = new File(SAVE_FILE);
+        if (!file.exists()) {
+            return;
+        }
+
+        File tempFile = new File(SAVE_FILE + ".tmp");
+        try (BufferedReader reader = new BufferedReader(new FileReader(file));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.equals(taskName + " | " + dueDate)) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error deleting task: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Replace the original file with the updated file
+        if (!file.delete() || !tempFile.renameTo(file)) {
+            JOptionPane.showMessageDialog(null, "Error updating task file.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

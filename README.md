@@ -33,3 +33,5 @@ jpackage \
   --name AssignmentLogger \
   --main-jar AssignmentLogger.jar \
   --main-class AssignmentLogger
+
+  chmod +w "/Volumes/Toshiba HDD/Code/assignment logger/src"
