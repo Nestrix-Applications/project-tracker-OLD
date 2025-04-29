@@ -1,4 +1,4 @@
-# Assignment Tracker
+# Project Tracker
 
 A simple and easy way to keep track of due dates and make a list. Works with any OS you can download java on.
 
