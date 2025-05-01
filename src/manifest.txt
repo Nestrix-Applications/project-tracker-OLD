@@ -1,1 +1,1 @@
-Main-Class: AssignmentLogger
+Main-Class: ProjectTracker

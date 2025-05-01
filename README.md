@@ -1,10 +1,11 @@
-# Project Tracker
+# Assignment Tracker
 
-A simple and easy way to keep track of due dates and make a list. Works with any OS you can download java on.
+A simple and easy way to keep track of due dates and make a list.
+Made for MacOs
 
 ## Prerequisites
 
-- Java Development Kit (JDK) 14 or higher (25 reccomended)
+- Java Development Kit (JDK) 14 or higher
 
 ## Project Structure
 
