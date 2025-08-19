@@ -1,3 +1,6 @@
+# READ
+no longer open source. download for src for older versions is still available.
+
 # Assignment Tracker
 
 A simple and easy way to keep track of due dates and make a list.
