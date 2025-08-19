@@ -1,5 +1,8 @@
 # READ
-no longer open source. download for src for older versions is still available.
+no longer open source.
+This is the OLD version. please visit https://github.com/callenflynn/C-Productivity-Hub
+
+
 
 # Assignment Tracker
 
